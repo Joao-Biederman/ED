@@ -20,11 +20,19 @@ using namespace std;
 
 // type DataType uint16
 
+void clear(){
+   cout << "\033[H\033[2J"; // escape codes para limpar a tela (Unix)
+};
+
+void bufferClear(){
+    cin >> ws;
+}
+
 // /******************************
 //  * Declaração da classe BTree *
 //  ******************************/
  
-class schedule
+class contact
 {
 private:
     char name[30];
@@ -32,6 +40,8 @@ private:
     char number[15];
     int trash = 0;
 public:
+    contact();
+
     string getName();
     string getAdress();
     string getNumber();
@@ -45,7 +55,61 @@ public:
     void setAdress();
     void setNumber();
 
+    void printContact();
 };
+
+contact::contact()
+{
+    this->setName();
+    this->setAdress();
+    this->setNumber();
+}
+
+string contact::getName()
+{
+    return name;
+}
+
+string contact::getAdress()
+{
+    return adress;
+}
+
+string contact::getNumber()
+{
+    return number;
+}
+
+void contact::setName()
+{
+    cout << "Insira o nome do contato: ";
+    fgets(name, 30, stdin);
+    bufferClear();
+
+}
+
+void contact::setAdress()
+{
+    cout << "Insira o endereço do contato: ";
+    fgets(adress, 50, stdin);
+    bufferClear();
+    
+}
+
+void contact::setNumber()
+{
+    cout << "Insira o telefone do contato: ";
+    fgets(number, 15, stdin);
+    bufferClear();
+
+}
+
+void contact::printContact()
+{
+    cout << "Name: " << name << endl;
+    cout << "  Adress: " << adress << endl;
+    cout << "  Number: " << number << endl << endl;
+}
 
 // /*******************
 //  * Estrutura do nó *
@@ -59,31 +123,27 @@ public:
 class node
 {
 private:
-    bool leaf;
-    schedule *keys[3];
+    int leaf = 0;
+    contact *key[3];
     node *children[4];
 
 public:
-    node(/* args */);
-    ~node() ;
+    node(int isLeaf);
+    node(int isLeaf, const contact newContact);
+
 };
 
-node::node(/* args */)
+node::node(int isLeaf)
+{
+    leaf = isLeaf;
+    contact newContact;
+    key[0] = &newContact;
+}
+
+node::node(int isLeaf, const contact newContact)
 {
 }
 
-node::~node()
-{
-}
-
-
-
-class agenda
-{
-private:
-
-public:
-};
 // /*********************************************************
 //  * InitNode(leaf): Criação de um novo nó da árvore B *
 //  * leaf indica se o novo nó será uma folha ou não        *
@@ -103,14 +163,6 @@ public:
 // 	root *BTreeNode
 // }
 
-// /*************************************
-//  * Init(): Inicialização da árvore-B *
-//  *************************************/
-// func Init() *BTree {
-// 	return &BTree{
-// 		root: InitNode(true),
-// 	}
-// }
 
 // /*********************************************************
 //  * Impressão da árvore B em forma de árvore de diretório *
@@ -196,23 +248,6 @@ public:
 // 	}
 // }
 
-// /******************************************************
-//  * Insert(key): Inserção de uma chave na árvore B     *
-//  * Esta é a função que deve ser chamada para realizar *
-//  * a inserção. key é a chave a ser inserida.          *
-//  ******************************************************/
-// func (tree *BTree) Insert(key DataType) {
-// 	root := tree.root
-// 	if len(root.keys) == 2*t-1 {
-// 		newRoot := InitNode(false)
-// 		newRoot.children = append(newRoot.children, root)
-// 		newRoot.splitChild(0)
-// 		tree.root = newRoot
-// 	}
-// 	tree.root.Insert(key)
-// }
-
-
 // // Busca de uma chave na árvore B
 // func (node *BTreeNode) Search(key DataType) *DataType {
 // 	i := 0
@@ -227,6 +262,48 @@ public:
 // 	} else {
 // 		return node.children[i].Search(key)
 // 	}
+// }
+
+class schedule
+{
+private:
+    node *root;
+
+public:
+    schedule();
+
+    void insert();
+    contact *search();
+};
+
+schedule::schedule()
+{
+    node newNode(1);
+    root = &newNode;
+}
+// /*************************************
+//  * Init(): Inicialização da árvore-B *
+//  *************************************/
+// func Init() *BTree {
+// 	return &BTree{
+// 		root: InitNode(true),
+// 	}
+// }
+
+// /******************************************************
+//  * Insert(key): Inserção de uma chave na árvore B     *
+//  * Esta é a função que deve ser chamada para realizar *
+//  * a inserção. key é a chave a ser inserida.          *
+//  ******************************************************/
+// func (tree *BTree) Insert(key DataType) {
+// 	root := tree.root
+// 	if len(root.keys) == 2*t-1 {
+// 		newRoot := InitNode(false)
+// 		newRoot.children = append(newRoot.children, root)
+// 		newRoot.splitChild(0)
+// 		tree.root = newRoot
+// 	}
+// 	tree.root.Insert(key)
 // }
 
 // // Busca de uma chave na árvore B
@@ -244,6 +321,14 @@ public:
 // /****************************
 //  * main(): Função principal *
 //  ****************************/
+
+int main() {
+    contact contato1;
+
+    clear();
+
+    contato1.printContact();
+}
 // func main() {
 //    // Declaração de variáveis
 //    var (
