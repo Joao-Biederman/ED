@@ -127,22 +127,16 @@ private:
     contact *key[3];
     node *children[4];
 
+    int contactsLen;
+    int childLen;
 public:
+    node(const node *A);
     node(int isLeaf);
     node(int isLeaf, const contact newContact);
 
+    void print(string ident, int last);
+    void splitChild(int i);
 };
-
-node::node(int isLeaf)
-{
-    leaf = isLeaf;
-    contact newContact;
-    key[0] = &newContact;
-}
-
-node::node(int isLeaf, const contact newContact)
-{
-}
 
 // /*********************************************************
 //  * InitNode(leaf): Criação de um novo nó da árvore B *
@@ -156,13 +150,28 @@ node::node(int isLeaf, const contact newContact)
 // 	}
 // }
 
-// /**************************************
-//  * Definição da estrutura da Árvore B *
-//  **************************************/
-// type BTree struct {
-// 	root *BTreeNode
-// }
+node::node(const node *A)
+{
+    this->leaf = A->leaf;
+    for (int i = 0; i < A->contactsLen; i++)
+        this->key[i] = A->key[i];
+    for (int i = 0; i < A->childLen; i++)
+        this->children[i] = A->children[i];
 
+    this->contactsLen = A->contactsLen;
+    this->childLen = A->childLen;
+}
+
+node::node(int isLeaf)
+{
+    leaf = isLeaf;
+    contact newContact;
+    key[0] = &newContact;
+}
+
+node::node(int isLeaf, const contact newContact)
+{
+}
 
 // /*********************************************************
 //  * Impressão da árvore B em forma de árvore de diretório *
@@ -187,6 +196,37 @@ node::node(int isLeaf, const contact newContact)
 // 		child.Print(indent, i == childCount-1)
 // 	}
 // }
+
+void node::print(string ident, int last)
+{
+    printf("%s", ident);
+    if (last)
+    {
+        cout << "└─ ";
+        ident.append("    ");
+    } else
+    {
+        cout << "├─ ";
+        ident.append("|   ");
+    }
+    cout << "|";
+    for (int i = 0; i < contactsLen; i++)
+    {
+        if (this->key[i])
+        {
+            cout << " " << this->key[i]->getName() << " ";
+        } else
+        {
+            cout << "  ";
+        }
+        cout << "|";
+    }
+    for (int i = 0; i < childLen; i++)
+    {
+        node child(children[i]);
+        child.print(ident, (childLen-1) - i);
+    }
+}
 
 // /*********************************************************
 //  * splitChild(i): implementa a Divisão de um filho cheio *
@@ -215,6 +255,31 @@ node::node(int isLeaf, const contact newContact)
 // 	node.keys[i] = child.keys[t-1]
 // 	child.keys = child.keys[:t-1]
 // }
+
+void node::splitChild(int i)
+{
+    node child(this->children[i]);
+    node newChild(child.leaf);
+
+    int len = child.contactsLen;
+    for (int j = 0, k = 2; j < len; j++, k++)
+    {
+        newChild.key[j] = child.key[k];
+        child.key[k] = NULL;
+        child.contactsLen--;
+        newChild.contactsLen++;
+    }
+    if (child.leaf)
+    {
+        len = child.childLen;
+        for (int j = 0, k = 2; j < len; j++, k++)
+        {
+            newChild.children[j] = child.children[k];
+            child.children[k] = NULL;
+        }   
+    }
+      
+}
 
 // /***********************************************************
 //  * Insert(key): Inserção de uma chave em um nó da árvore B *
@@ -275,6 +340,14 @@ public:
     void insert();
     contact *search();
 };
+
+// /**************************************
+//  * Definição da estrutura da Árvore B *
+//  **************************************/
+// type BTree struct {
+// 	root *BTreeNode
+// }
+
 
 schedule::schedule()
 {
