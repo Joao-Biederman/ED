@@ -138,8 +138,6 @@ void graph::removeVertice(int v)
         adjacencyDistance[size - 1][i] = 0;
         adjacencyDistance[i][size - 1] = 0;
     }
-
-    size--;
 }
 
 void graph::removeEdge(int v1, int v2)
